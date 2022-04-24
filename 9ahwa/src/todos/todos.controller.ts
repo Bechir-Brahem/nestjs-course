@@ -6,8 +6,6 @@ import { UpdateTodoDto } from "./dto/update-todo.dto";
 
 @Controller("todo")
 export class TodosController {
-  todos: Todo[] = [];
-
   constructor(private readonly manageTodos: ManageTodoService) {
   }
 
