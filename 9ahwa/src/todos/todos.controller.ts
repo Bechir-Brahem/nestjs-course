@@ -10,42 +10,27 @@ export class TodosController {
   }
 
   @Get()
-  getTodos(): Todo[] {
+  getTodos(): Promise<Todo[]> {
     return this.manageTodos.findAll();
   }
 
   @Get(":id")
-  getTodo(@Param("id") id: number) {
-    let todo = this.manageTodos.findOne(id);
-    if (todo === null) {
-      throw new NotFoundException("todo not found");
-    }
-    return todo;
-
+  getTodo(@Param("id") id: number): Promise<Todo>{
+    return  this.manageTodos.findOne(id);
   }
 
   @Post()
-  addTodo(@Body() newTodo: CreateTodoDto): CreateTodoDto {
-    this.manageTodos.addTodo(newTodo);
-    return newTodo
+  addTodo(@Body() newTodo: CreateTodoDto): Promise<Todo>{
+    return this.manageTodos.addTodo(newTodo);
   }
 
   @Patch(":id")
-  updateTodo(@Body() cuteTodo: UpdateTodoDto, @Param("id") id: number): Todo {
-    let todo = this.manageTodos.update(id, cuteTodo);
-    if (todo === null) {
-      throw new NotFoundException("todo not found");
-    }
-    return todo;
+  updateTodo(@Body() cuteTodo: UpdateTodoDto, @Param("id") id: number): Promise<Todo> {
+    return this.manageTodos.update(id, cuteTodo);
   }
 
   @Delete(":id")
-  deleteTodo(@Param("id") id: number) {
-    let todo = this.manageTodos.delete(id);
-    if (todo === null) {
-      throw new NotFoundException("todo not found");
-    }
-    return todo;
-
+  deleteTodo(@Param("id") id: number): Promise<Todo> {
+    return this.manageTodos.delete(id);
   }
 }
