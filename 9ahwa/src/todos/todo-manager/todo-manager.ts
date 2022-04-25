@@ -23,6 +23,7 @@ export class ManageTodoService {
   }
 
   async findAll(queries: FindAllDto): Promise<Todo[]> {
+    // TODO: add a better pagination with decorator
     const { limit, offset, status, criteria } = queries;
     const paginationOptions = { take: limit, skip: offset };
 
