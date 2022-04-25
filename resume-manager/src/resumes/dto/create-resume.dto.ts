@@ -1,4 +1,5 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { UploadedFile } from '@nestjs/common';
 
 export class CreateResumeDto {
 

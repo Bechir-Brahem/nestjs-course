@@ -3,6 +3,8 @@ import { ResumesModule } from './resumes/resumes.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
+import { UsersModule } from './users/users.module';
+import { SkillsModule } from './skills/skills.module';
 
 
 @Module({
@@ -25,6 +27,10 @@ import { MulterModule } from '@nestjs/platform-express';
         dest: './files',
       }),
     }),
+
+    UsersModule,
+
+    SkillsModule,
 
   ],
   controllers: [],
