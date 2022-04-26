@@ -3,13 +3,13 @@ import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
-import { SkillEntity } from './entities/skill.entity';
+import { Skill } from './entities/skill.entity';
 
 @Injectable()
 export class SkillsService {
   constructor(
-    @InjectRepository(SkillEntity)
-    private readonly skillRepository: Repository<SkillEntity>) {
+    @InjectRepository(Skill)
+    private readonly skillRepository: Repository<Skill>) {
   }
 
   async create(createSkillDto: CreateSkillDto) {

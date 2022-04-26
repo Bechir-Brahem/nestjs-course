@@ -1,7 +1,16 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinTable, ManyToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Skill } from '../../skills/entities/skill.entity';
 
 @Entity()
-export class ResumeEntity {
+export class Resume {
   @PrimaryGeneratedColumn()
   public id: number;
   @Column()
@@ -20,4 +29,13 @@ export class ResumeEntity {
   age:number
   @Column()
   path:string;
+  @JoinTable()
+  @ManyToMany(
+    type => Skill,
+    (skill)=>skill.resumes,
+    {
+      cascade:true,
+    }
+    )
+  skills: Skill[];
 }

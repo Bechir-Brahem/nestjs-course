@@ -4,9 +4,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from './classes/utils';
 import { CreateResumeDto } from './dto/create-resume.dto';
-import { ResumeEntity } from './entities/resume.entity';
+import { Resume } from './entities/resume.entity';
 import { UpdateResumeDto } from './dto/update-resume.dto';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { DeleteResult } from 'typeorm';
 
 const multerOptions = FileInterceptor('file', {
   limits: {
@@ -36,8 +36,9 @@ export class ResumesController {
   async getAll() {
     return this.resumesService.findAll();
   }
-  @Get(":id([0-9]+)")
-  async getOne(@Param('id') id :number){
+
+  @Get(':id([0-9]+)')
+  async getOne(@Param('id') id: number) {
     return this.resumesService.findOne(id);
   }
 
@@ -47,13 +48,13 @@ export class ResumesController {
     @Param('id') id: number,
     @Body() updateResumeDto: UpdateResumeDto,
     @UploadedFile() file,
-  ): Promise<ResumeEntity> {
+  ): Promise<Resume> {
     return this.resumesService.update(id, updateResumeDto, file);
   }
 
   @Delete(':id([0-9]+)')
-  async delete(@Param('id')id :number) : Promise<DeleteResult> {
-    return this.resumesService.remove(id)
+  async delete(@Param('id') id: number): Promise<DeleteResult> {
+    return this.resumesService.remove(id);
   }
 
 }
