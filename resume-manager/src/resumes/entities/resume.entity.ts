@@ -3,11 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinTable, ManyToMany,
+  JoinTable, ManyToMany, ManyToOne, OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Skill } from '../../skills/entities/skill.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class Resume {
@@ -38,4 +39,9 @@ export class Resume {
     }
     )
   skills: Skill[];
+  @ManyToOne(
+    type =>User,
+    user=>user.resumes,
+  )
+  user:User;
 }

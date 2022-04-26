@@ -1,26 +1,53 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Repository } from 'typeorm';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {
   }
 
-  findAll() {
-    return `This action returns all users`;
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    let obj={ ...createUserDto, resumes: [] }
+    console.log(obj)
+    const user = await this.userRepository.create(obj);
+    console.log(user)
+    return this.userRepository.save(user);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find({ relations: ['resumes','resumes.skills'] });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOne(id: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: id },
+      relations: ['resumes','resumes.skills'],
+    });
+    if (!user)
+      throw new NotFoundException('user not found');
+    return user;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.preload({
+      id: id,
+      ...updateUserDto,
+    });
+    if (!user)
+      throw new NotFoundException('user not found');
+    return await this.userRepository.save(user);
+
+  }
+
+  async remove(id: number): Promise<DeleteResult> {
+    return await this.userRepository.delete(id);
   }
 }

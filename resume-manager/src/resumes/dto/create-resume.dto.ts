@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 function isString(x) {
     return Object.prototype.toString.call(x) === '[object String]';
@@ -23,4 +23,8 @@ export class CreateResumeDto {
     return null
   })
   readonly skills: string[];
+
+  @IsNumber()
+  @IsPositive()
+  readonly user:number;
 }

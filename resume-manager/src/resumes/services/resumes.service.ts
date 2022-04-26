@@ -6,6 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Resume } from '../entities/resume.entity';
 import { unlink } from 'fs';
 import { Skill } from '../../skills/entities/skill.entity';
+import { User } from '../../users/entities/user.entity';
+import { UsersService } from '../../users/users.service';
 
 
 @Injectable()
@@ -15,6 +17,7 @@ export class ResumesService {
     private readonly resumeRepository: Repository<Resume>,
     @InjectRepository(Skill)
     private readonly skillRepository: Repository<Skill>,
+   private readonly userService:UsersService
   ) {
   }
 
@@ -23,24 +26,27 @@ export class ResumesService {
       createResumeDto.skills.map(name =>this.preloadSkillByName(name)),
     );
 
+    const user = await this.userService.findOne(createResumeDto.user);
+
     let resume = this.resumeRepository.create({
       ...createResumeDto,
       skills,
       path: file.path,
+      user:user
     });
     return await this.resumeRepository.save(resume);
   }
 
   async findAll(): Promise<Resume[]> {
     return await this.resumeRepository.find({
-      relations: ['skills'],
+      relations: ['skills','user'],
     });
   }
 
   async findOne(id: number): Promise<Resume> {
     const res = await this.resumeRepository.findOne({
       where: { id: id },
-      relations: ['skills'],
+      relations: ['skills','user'],
     });
     if (!res) {
       throw new NotFoundException('resume not found');
@@ -49,14 +55,25 @@ export class ResumesService {
   }
 
   async update(id: number, updateResumeDto: UpdateResumeDto, file: Express.Multer.File): Promise<Resume> {
-    const skills = await Promise.all(
+
+    const skills = updateResumeDto.skills && await Promise.all(
       updateResumeDto.skills.map(name =>this.preloadSkillByName(name)),
     );
 
+    let user=null;
+    if(updateResumeDto.user) {
+      user= await this.userService.findOne(updateResumeDto.user);
+    }
+    else{
+      let tmp = await this.resumeRepository.findOneBy({id:id})
+      user = await this.userService.findOne(id)
+    }
+
     let resume = await this.resumeRepository.preload({
-      id: id,
+      id:id,
       ...updateResumeDto,
-      skills
+      skills,
+      user,
     });
     if (!resume) {
       throw  new NotFoundException('resume not found');

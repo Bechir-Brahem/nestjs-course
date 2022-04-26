@@ -30,10 +30,12 @@ export class SkillsService {
   }
 
   async update(id: number, updateSkillDto: UpdateSkillDto) {
-    const skill = await this.skillRepository.preload({
+    const skill =await this.skillRepository.preload({
       id: id,
       ...updateSkillDto,
     });
+    if(!skill)
+      throw new NotFoundException('skill not found')
     return await this.skillRepository.save(skill);
   }
 
